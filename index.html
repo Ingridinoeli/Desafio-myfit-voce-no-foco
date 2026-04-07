@@ -338,6 +338,9 @@ const TAREFAS = [
   { label: "🔥 Participei do Aulão de 1:30h",          pontos: 10 },
 ];
 
+// URL do Google Forms (envia dados — 100% confiável)
+const FORMS_URL = "https://docs.google.com/forms/d/1mXdurrKet9Guem3l9yMQYbIgsBH9uz9VdnGMVp9MEmo/formResponse";
+// URL do Apps Script (lê ranking da planilha)
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbwFCGQJWXGoE1QWSZld36Al-k9tlqlJ97bHh04DpbjbDAmZ7NSLQpupqiKctpxvJPX4/exec";
 
 let ranking = [];
@@ -397,12 +400,14 @@ async function registrar() {
   if (fotoEl.files && fotoEl.files[0]) fotoBase64 = await toBase64(fotoEl.files[0]);
 
   try {
-    await fetch(SHEET_URL, {
+    const formData = new FormData();
+    formData.append("entry.110999198", nomeRaw);
+    formData.append("entry.237878825", tarefa.label);
+    formData.append("entry.1647743866", tarefa.pontos);
+    await fetch(FORMS_URL, {
       method: "POST", mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nome: nomeRaw, pontos: tarefa.pontos, tarefa: tarefa.label, foto: fotoBase64 }),
+      body: formData
     });
-    // Recarrega ranking da planilha após envio
     setTimeout(carregarRanking, 1500);
   } catch(e) { console.warn(e); }
 
