@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desafio Corpo em Chamas 🔥</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:           #080808;
+      --surface:      #111111;
+      --surface2:     #1a1a1a;
+      --border:       #262626;
+      --border-hover: #333;
+      --accent:       #f97316;
+      --accent-dk:    #c2570c;
+      --accent-glow:  rgba(249,115,22,0.22);
+      --gold:         #fbbf24;
+      --silver:       #94a3b8;
+      --bronze:       #cd7c46;
+      --green:        #22c55e;
+      --text:         #f0f0f0;
+      --muted:        #777;
+      --muted2:       #444;
+      --font-d:       'Bebas Neue', sans-serif;
+      --font-b:       'DM Sans', sans-serif;
+      --radius:       16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-b);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* noise */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; z-index: 1;
+      background: radial-gradient(ellipse 90% 55% at 50% 0%,
+        rgba(249,115,22,.2) 0%, transparent 68%), var(--bg);
+      text-align: center;
+      padding: 3.2rem 1.25rem 2.8rem;
+    }
+
+    .academy-tag {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: .22em; text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(249,115,22,.4);
+      border-radius: 100px;
+      padding: .3rem 1rem;
+      margin-bottom: 1.6rem;
+      animation: up .55s ease both;
+    }
+
+    .h1 {
+      font-family: var(--font-d);
+      font-size: clamp(2.8rem, 10vw, 5.5rem);
+      line-height: .92;
+      letter-spacing: .02em;
+      animation: up .55s .08s ease both;
+    }
+    .h1 em { color: var(--accent); font-style: normal; }
+
+    .challenge-name {
+      font-family: var(--font-d);
+      font-size: clamp(1.5rem, 5vw, 2.8rem);
+      color: var(--gold);
+      letter-spacing: .1em;
+      margin-top: .55rem;
+      text-shadow: 0 0 50px rgba(251,191,36,.45);
+      animation: up .55s .16s ease both;
+    }
+
+    .divider {
+      width: 52px; height: 3px;
+      background: var(--accent);
+      margin: 1.6rem auto;
+      border-radius: 4px;
+      animation: up .55s .22s ease both;
+    }
+
+    .subline {
+      font-size: clamp(.9rem, 2.8vw, 1.05rem);
+      color: var(--muted);
+      max-width: 34ch;
+      margin: 0 auto;
+      line-height: 1.65;
+      animation: up .55s .28s ease both;
+    }
+
+    /* ── CONTAINER ── */
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 1.25rem 5rem;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 48px rgba(0,0,0,.55);
+      animation: up .55s .35s ease both;
+    }
+
+    .card-title {
+      font-family: var(--font-d);
+      font-size: 1.3rem;
+      letter-spacing: .07em;
+      margin-bottom: 1.3rem;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    label {
+      display: block;
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: var(--font-b);
+      font-size: 1rem;
+      padding: .82rem 1rem;
+      margin-bottom: 1.1rem;
+      transition: border-color .2s, box-shadow .2s;
+      appearance: none;
+    }
+
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .sel-wrap { position: relative; margin-bottom: 1.1rem; }
+    .sel-wrap select { margin-bottom: 0; }
+    .sel-wrap::after {
+      content: '▾';
+      position: absolute; right: 1rem; top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent); font-size: .8rem;
+      pointer-events: none;
+    }
+
+    /* ── POINTS PILL ── */
+    .pts-pill {
+      display: flex; align-items: center; gap: .6rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .65rem 1rem;
+      margin-bottom: 1.2rem;
+      min-height: 44px;
+      transition: border-color .3s;
+    }
+    .pts-pill.active { border-color: var(--accent); }
+    .pts-pill .lbl { font-size: .72rem; color: var(--muted); flex: 1; }
+    .pts-pill .val {
+      font-family: var(--font-d);
+      font-size: 1.55rem;
+      letter-spacing: .04em;
+      color: var(--muted2);
+      transition: color .2s;
+    }
+    .pts-pill.active .val { color: var(--accent); }
+
+    /* ── PHOTO UPLOAD ── */
+    .photo-zone {
+      border: 1.5px dashed var(--border);
+      border-radius: 12px;
+      padding: 1.2rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+    .photo-zone:hover { border-color: var(--accent); background: rgba(249,115,22,.04); }
+    .photo-zone.has-file { border-color: var(--green); background: rgba(34,197,94,.06); }
+    .photo-zone input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .photo-icon { font-size: 1.6rem; margin-bottom: .3rem; }
+    .photo-label { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+    .photo-label strong { color: var(--text); }
+    .photo-preview {
+      width: 100%; max-height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: .75rem;
+      display: none;
+    }
+    .photo-preview.show { display: block; }
+    .optional-tag {
+      display: inline-block;
+      font-size: .6rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); border: 1px solid var(--border);
+      border-radius: 4px; padding: .08rem .4rem;
+      margin-left: .4rem; vertical-align: middle;
+    }
+
+    /* ── BUTTON ── */
+    .btn {
+      width: 100%;
+      background: var(--accent);
+      color: #fff; border: none;
+      border-radius: 12px;
+      font-family: var(--font-d);
+      font-size: 1.25rem; letter-spacing: .1em;
+      padding: .95rem 1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 28px rgba(249,115,22,.38);
+      transition: background .2s, box-shadow .2s, transform .1s;
+    }
+    .btn:hover { background: var(--accent-dk); box-shadow: 0 4px 38px rgba(249,115,22,.55); }
+    .btn:active { transform: scale(.98); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── PROGRESS BAR inside button ── */
+    .btn-inner { display: flex; align-items: center; justify-content: center; gap: .6rem; }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    .btn.loading .spinner { display: block; }
+
+    /* ── RANKING ── */
+    .ranking-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      animation: up .55s .45s ease both;
+    }
+
+    .rk-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.15rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .rk-header h2 { font-family: var(--font-d); font-size: 1.3rem; letter-spacing: .07em; }
+
+    .live {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .65rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--green);
+    }
+    .live::before {
+      content: ''; width: 7px; height: 7px;
+      background: var(--green); border-radius: 50%;
+      animation: blink 1.6s infinite;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      font-size: .65rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted);
+      padding: .55rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    thead th:last-child { text-align: right; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+
+    td { padding: .82rem 1rem; font-size: .93rem; }
+
+    .pos { font-family: var(--font-d); font-size: 1.05rem; width: 34px; }
+    .g { color: var(--gold); }
+    .s { color: var(--silver); }
+    .b { color: var(--bronze); }
+    .n { color: var(--muted2); }
+
+    .p-name { font-weight: 600; }
+    .new-tag {
+      display: inline-block;
+      font-size: .58rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      background: var(--accent-glow); color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 4px; padding: .08rem .38rem;
+      margin-left: .4rem; vertical-align: middle;
+    }
+    .score-td {
+      text-align: right;
+      font-family: var(--font-d);
+      font-size: 1.3rem; letter-spacing: .04em;
+      color: var(--accent);
+    }
+    .score-td span { font-size: .68rem; color: var(--muted); }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 1.5rem; left: 50%;
+      transform: translateX(-50%) translateY(90px);
+      background: var(--green); color: #fff;
+      font-family: var(--font-b); font-weight: 700; font-size: .88rem;
+      padding: .75rem 1.5rem;
+      border-radius: 100px;
+      z-index: 999;
+      transition: transform .38s cubic-bezier(.34,1.56,.64,1), opacity .38s;
+      opacity: 0; white-space: nowrap;
+      box-shadow: 0 4px 24px rgba(34,197,94,.4);
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #toast.error { background: #ef4444; box-shadow: 0 4px 24px rgba(239,68,68,.4); }
+
+    /* ── APPS SCRIPT GUIDE ── */
+    .guide {
+      margin-top: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      animation: up .55s .55s ease both;
+    }
+    .guide h3 {
+      font-family: var(--font-d); font-size: 1.25rem;
+      letter-spacing: .07em; color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .guide p, .guide li {
+      font-size: .84rem; color: var(--muted); line-height: 1.7;
+      margin-bottom: .5rem;
+    }
+    .guide ol { padding-left: 1.2rem; }
+    .guide li { margin-bottom: .45rem; }
+    .step {
+      display: inline-block;
+      font-family: var(--font-d); font-size: .82rem;
+      color: var(--accent); letter-spacing: .1em;
+      margin-bottom: .25rem; margin-top: .8rem;
+    }
+    .code-block {
+      background: #000;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: .9rem 1rem;
+      font-size: .75rem;
+      color: #4ade80;
+      white-space: pre;
+      overflow-x: auto;
+      margin: .6rem 0 .9rem;
+      line-height: 1.65;
+      font-family: 'Courier New', monospace;
+    }
+    .hl { color: #f5f5f5; }
+    .cm { color: #555; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes up {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: .25; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes rowFlash {
+      0%   { background: rgba(249,115,22,.18); }
+      100% { background: transparent; }
+    }
+    .row-new { animation: rowFlash 2s ease forwards; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 1.2rem 1rem 2.5rem;
+      font-size: .72rem; color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="academy-tag">🏋️ Sua Academia · Desafio de Engajamento</div>
+  <h1 class="h1">Cada treino<br/><em>conta pontos.</em></h1>
+  <p class="challenge-name">⚡ DESAFIO CORPO EM CHAMAS ⚡</p>
+  <div class="divider"></div>
+  <p class="subline">Registre, comprove e suba no ranking. Consistência tem nome — e o seu vai estar no topo.</p>
+</div>
+
+<!-- ═══ CONTEÚDO ═══ -->
+<div class="wrap">
+
+  <!-- FORMULÁRIO -->
+  <div class="card">
+    <p class="card-title">📝 REGISTRAR PONTOS</p>
+
+    <label for="nome">Seu nome completo</label>
+    <input type="text" id="nome" placeholder="Ex: Maria Silva" autocomplete="off" />
+
+    <label for="atividade">Atividade realizada</label>
+    <div class="sel-wrap">
+      <select id="atividade" onchange="onActivityChange()">
+        <option value="">— Escolha o que você fez hoje —</option>
+      </select>
+    </div>
+
+    <!-- points preview -->
+    <div class="pts-pill" id="pill">
+      <span class="lbl">Pontos que você vai ganhar:</span>
+      <span class="val" id="pts-val">—</span>
+    </div>
+
+    <!-- photo upload -->
+    <label>
+      Comprovante (foto)
+      <span class="optional-tag">opcional</span>
+    </label>
+    <div class="photo-zone" id="photo-zone">
+      <input type="file" id="foto" accept="image/*" capture="environment" onchange="onPhotoChange()" />
+      <div class="photo-icon">📸</div>
+      <p class="photo-label"><strong>Toque aqui para tirar ou escolher uma foto</strong><br/>JPG, PNG, HEIC · máx. 10 MB</p>
+      <img class="photo-preview" id="preview-img" alt="preview" />
+    </div>
+
+    <button class="btn" id="btn-submit" onclick="registrar()">
+      <span class="btn-inner">
+        <span class="spinner" id="spinner"></span>
+        <span id="btn-text">REGISTRAR PONTOS 🔥</span>
+      </span>
+    </button>
+  </div>
+
+  <!-- RANKING -->
+  <div class="ranking-card">
+    <div class="rk-header">
+      <h2>🏆 RANKING GERAL</h2>
+      <span class="live">AO VIVO</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Participante</th>
+          <th>Pontos</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- GUIA DO APPS SCRIPT -->
+  <div class="guide">
+    <h3>⚙️ COMO CONECTAR COM O GOOGLE PLANILHAS</h3>
+    <p>Copie o código abaixo e cole no <strong style="color:#f0f0f0">Apps Script</strong> da sua planilha (<em>Extensões → Apps Script</em>). Ele já cuida de somar pontos de nomes iguais e salvar fotos no Drive.</p>
+
+    <span class="step">PASSO 1 — COLE ESTE CÓDIGO NO APPS SCRIPT</span>
+    <div class="code-block"><span class="cm">// ── CONFIGURAÇÃO ──────────────────────────────────────</span>
+<span class="hl">const PASTA_FOTOS_ID</span> = <span style="color:#fb923c">"COLE_O_ID_DA_PASTA_DO_DRIVE_AQUI"</span>;
+<span class="cm">// Crie uma pasta no Drive, abra ela, copie o ID da URL</span>
+
+<span class="hl">function doPost</span>(e) {
+  <span class="hl">const</span> sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(<span style="color:#fb923c">"Ranking"</span>);
+  <span class="hl">const</span> dados = JSON.parse(e.postData.contents);
+  <span class="hl">const</span> nome    = dados.nome.trim().toLowerCase();
+  <span class="hl">const</span> pontos  = Number(dados.pontos);
+  <span class="hl">const</span> tarefa  = dados.tarefa;
+  <span class="hl">const</span> fotoB64 = dados.foto || <span style="color:#fb923c">""</span>;
+
+  <span class="cm">// Salva foto no Drive (se enviada)</span>
+  <span class="hl">let</span> linkFoto = <span style="color:#fb923c">""</span>;
+  <span class="hl">if</span> (fotoB64) {
+    <span class="hl">const</span> bytes  = Utilities.base64Decode(fotoB64.split(<span style="color:#fb923c">","</span>)[1]);
+    <span class="hl">const</span> blob   = Utilities.newBlob(bytes, <span style="color:#fb923c">"image/jpeg"</span>, nome + <span style="color:#fb923c">"_"</span> + Date.now() + <span style="color:#fb923c">".jpg"</span>);
+    <span class="hl">const</span> pasta  = DriveApp.getFolderById(PASTA_FOTOS_ID);
+    <span class="hl">const</span> arq    = pasta.createFile(blob);
+    arq.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    linkFoto = arq.getUrl();
+  }
+
+  <span class="cm">// Busca se o nome já existe na planilha</span>
+  <span class="hl">const</span> dados_planilha = sheet.getDataRange().getValues();
+  <span class="hl">let</span> linhaExistente = -1;
+  <span class="hl">for</span> (<span class="hl">let</span> i = 1; i &lt; dados_planilha.length; i++) {
+    <span class="hl">if</span> (dados_planilha[i][0].toString().trim().toLowerCase() === nome) {
+      linhaExistente = i + 1; <span class="cm">// +1 porque sheets é 1-indexed</span>
+      <span class="hl">break</span>;
+    }
+  }
+
+  <span class="hl">if</span> (linhaExistente > 0) {
+    <span class="cm">// Nome já existe → soma pontos na coluna B</span>
+    <span class="hl">const</span> ptAtual = sheet.getRange(linhaExistente, 2).getValue();
+    sheet.getRange(linhaExistente, 2).setValue(ptAtual + pontos);
+    sheet.getRange(linhaExistente, 4).setValue(new Date()); <span class="cm">// última atualização</span>
+  } <span class="hl">else</span> {
+    <span class="cm">// Nome novo → adiciona linha</span>
+    sheet.appendRow([dados.nome.trim(), pontos, tarefa, new Date(), linkFoto]);
+  }
+
+  <span class="hl">return</span> ContentService
+    .createTextOutput(JSON.stringify({ status: <span style="color:#fb923c">"ok"</span> }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+</div>
+
+    <span class="step">PASSO 2 — CRIE A ABA "Ranking" NA PLANILHA</span>
+    <p>Renomeie a primeira aba para <strong style="color:#f0f0f0">Ranking</strong> e coloque estes cabeçalhos na linha 1:</p>
+    <div class="code-block">A1: Nome  |  B1: Pontos  |  C1: Última Tarefa  |  D1: Atualizado em  |  E1: Foto</div>
+
+    <span class="step">PASSO 3 — PUBLIQUE COMO WEB APP</span>
+    <ol>
+      <li>Clique em <strong style="color:#f0f0f0">Implantar → Nova implantação → Web App</strong></li>
+      <li>Em "Executar como": <strong style="color:#f0f0f0">Eu mesmo</strong></li>
+      <li>Em "Quem tem acesso": <strong style="color:#f0f0f0">Qualquer pessoa</strong></li>
+      <li>Copie a URL gerada (começa com <code style="color:#4ade80; background:#000; padding:.1rem .35rem; border-radius:4px">https://script.google.com/macros/s/.../exec</code>)</li>
+    </ol>
+
+    <span class="step">PASSO 4 — COLE A URL AQUI NESTE ARQUIVO HTML</span>
+    <p>Neste mesmo arquivo, procure a linha abaixo e substitua pelo link real:</p>
+    <div class="code-block"><span class="hl">const</span> SHEET_URL = <span style="color:#fb923c">"COLE_SUA_URL_DO_APPS_SCRIPT_AQUI"</span>;</div>
+
+    <p style="margin-top:.6rem">✅ Pronto! Cada envio vai: <strong style="color:#f0f0f0">somar pontos</strong> para nomes iguais, <strong style="color:#f0f0f0">salvar foto no Drive</strong> e <strong style="color:#f0f0f0">atualizar o ranking</strong> automaticamente.</p>
+  </div>
+
+</div><!-- /wrap -->
+
+<footer>© 2025 · Desafio Corpo em Chamas · Feito com 🔥</footer>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  ⚙️  CONFIGURAÇÃO — edite aqui para adicionar tarefas
+// ═══════════════════════════════════════════════════════
+const TAREFAS = [
+  { label: "🏃 Fui treinar hoje",                    pontos: 3  },
+  { label: "🥗 Tirei foto do meu prato saudável",    pontos: 2  },
+  { label: "📸 Marquei a academia nas redes sociais", pontos: 2  },
+  { label: "👯 Levei um(a) amigo(a) para treinar",   pontos: 5  },
+  { label: "⏱️ Fiz 15 minutos de Cardio",             pontos: 2  },
+  { label: "⏱️ Fiz 30 minutos de Cardio",             pontos: 4  },
+  { label: "🔥 Participei do Aulão de 1:30h",         pontos: 10 },
+  // ← Para adicionar nova tarefa, copie a linha acima e edite
+];
+
+// URL do seu Apps Script (substitua após publicar)
+const SHEET_URL = "COLE_SUA_URL_DO_APPS_SCRIPT_AQUI";
+
+// ═══════════════════════════════════════════════════════
+//  DADOS MOCK — ranking inicial de exemplo
+// ═══════════════════════════════════════════════════════
+let ranking = [
+  { nome: "Fernanda Costa",  pts: 28 },
+  { nome: "Juliana Rocha",   pts: 22 },
+  { nome: "Bruna Mendes",    pts: 19 },
+  { nome: "Camila Souza",    pts: 14 },
+  { nome: "Patricia Lima",   pts: 10 },
+  { nome: "Ana Beatriz",     pts:  7 },
+];
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+(function init() {
+  const sel = document.getElementById("atividade");
+  TAREFAS.forEach((t, i) => {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = `${t.label}  (+${t.pontos} pts)`;
+    sel.appendChild(opt);
+  });
+  renderRanking();
+})();
+
+// ═══════════════════════════════════════════════════════
+//  HANDLERS
+// ═══════════════════════════════════════════════════════
+function onActivityChange() {
+  const sel = document.getElementById("atividade");
+  const pill = document.getElementById("pill");
+  const val  = document.getElementById("pts-val");
+  const idx  = parseInt(sel.value);
+  if (!isNaN(idx) && TAREFAS[idx]) {
+    val.textContent = "+" + TAREFAS[idx].pontos + " pts";
+    pill.classList.add("active");
+  } else {
+    val.textContent = "—";
+    pill.classList.remove("active");
+  }
+}
+
+function onPhotoChange() {
+  const input = document.getElementById("foto");
+  const zone  = document.getElementById("photo-zone");
+  const img   = document.getElementById("preview-img");
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      img.src = e.target.result;
+      img.classList.add("show");
+      zone.classList.add("has-file");
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  REGISTRAR
+// ═══════════════════════════════════════════════════════
+async function registrar() {
+  const nomeRaw = document.getElementById("nome").value.trim();
+  const sel     = document.getElementById("atividade");
+  const idx     = parseInt(sel.value);
+  const fotoEl  = document.getElementById("foto");
+
+  if (!nomeRaw)        { flash("nome");      toast("⚠️ Digite seu nome!", true); return; }
+  if (isNaN(idx))      { flash("atividade"); toast("⚠️ Escolha uma atividade!", true); return; }
+
+  const tarefa = TAREFAS[idx];
+  const btn    = document.getElementById("btn-submit");
+
+  // Loading state
+  btn.disabled = true;
+  document.getElementById("spinner").style.display = "block";
+  document.getElementById("btn-text").textContent = "Enviando...";
+
+  // Update ranking locally (imediato)
+  adicionarPontos(nomeRaw, tarefa.pontos, true);
+
+  // Build payload
+  let fotoBase64 = "";
+  if (fotoEl.files && fotoEl.files[0]) {
+    fotoBase64 = await toBase64(fotoEl.files[0]);
+  }
+
+  // Send to Google Sheets (if URL configured)
+  if (SHEET_URL && SHEET_URL !== "COLE_SUA_URL_DO_APPS_SCRIPT_AQUI") {
+    try {
+      await fetch(SHEET_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome:   nomeRaw,
+          pontos: tarefa.pontos,
+          tarefa: tarefa.label,
+          foto:   fotoBase64,
+        }),
+      });
+    } catch (err) {
+      console.warn("Sheets error:", err);
+    }
+  }
+
+  // Feedback
+  toast(`+${tarefa.pontos} pts para ${nomeRaw}! 🔥`);
+
+  // Reset form
+  document.getElementById("nome").value = "";
+  sel.value = "";
+  onActivityChange();
+  fotoEl.value = "";
+  document.getElementById("preview-img").classList.remove("show");
+  document.getElementById("photo-zone").classList.remove("has-file");
+
+  // Reset button
+  btn.disabled = false;
+  document.getElementById("spinner").style.display = "none";
+  document.getElementById("btn-text").textContent = "REGISTRAR PONTOS 🔥";
+}
+
+// ═══════════════════════════════════════════════════════
+//  RANKING LOGIC
+// ═══════════════════════════════════════════════════════
+function adicionarPontos(nome, pts, isNew) {
+  const nomeNorm = nome.trim().toLowerCase();
+  const existente = ranking.find(p => p.nome.trim().toLowerCase() === nomeNorm);
+  if (existente) {
+    existente.pts += pts;
+    existente.isNew = isNew;
+  } else {
+    ranking.push({ nome: nome.trim(), pts, isNew });
+  }
+  renderRanking();
+}
+
+function renderRanking() {
+  ranking.sort((a, b) => b.pts - a.pts);
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  ranking.forEach((p, i) => {
+    const tr = document.createElement("tr");
+    if (p.isNew) {
+      tr.classList.add("row-new");
+      setTimeout(() => { p.isNew = false; }, 2200);
+    }
+
+    const cls  = i === 0 ? "g" : i === 1 ? "s" : i === 2 ? "b" : "n";
+    const icon = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : (i + 1) + "º";
+    const tag  = p.isNew ? '<span class="new-tag">atualizado</span>' : "";
+
+    tr.innerHTML = `
+      <td class="pos ${cls}">${icon}</td>
+      <td class="p-name">${escHtml(p.nome)}${tag}</td>
+      <td class="score-td">${p.pts} <span>pts</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload  = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function flash(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = "#ef4444";
+  el.style.boxShadow = "0 0 0 3px rgba(239,68,68,.2)";
+  setTimeout(() => { el.style.borderColor = ""; el.style.boxShadow = ""; }, 700);
+}
+
+let toastTimer;
+function toast(msg, isError = false) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = isError ? "error" : "";
+  void t.offsetWidth; // reflow
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>
