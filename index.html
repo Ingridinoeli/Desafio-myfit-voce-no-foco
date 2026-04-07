@@ -340,14 +340,7 @@ const TAREFAS = [
 
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbwFCGQJWXGoE1QWSZld36Al-k9tlqlJ97bHh04DpbjbDAmZ7NSLQpupqiKctpxvJPX4/exec";
 
-let ranking = [
-  { nome: "Fernanda Costa", pts: 28 },
-  { nome: "Juliana Rocha",  pts: 22 },
-  { nome: "Bruna Mendes",   pts: 19 },
-  { nome: "Camila Souza",   pts: 14 },
-  { nome: "Patricia Lima",  pts: 10 },
-  { nome: "Ana Beatriz",    pts:  7 },
-];
+let ranking = [];
 
 (function init() {
   const sel = document.getElementById("atividade");
@@ -357,7 +350,7 @@ let ranking = [
     opt.textContent = t.label + "  (+" + t.pontos + " pts)";
     sel.appendChild(opt);
   });
-  renderRanking();
+  carregarRanking();
 })();
 
 function onActivityChange() {
@@ -398,20 +391,20 @@ async function registrar() {
   document.getElementById("spinner").style.display = "block";
   document.getElementById("btn-text").textContent = "Enviando...";
 
-  adicionarPontos(nomeRaw, tarefa.pontos, true);
+  adicionarPontosLocal(nomeRaw, tarefa.pontos);
 
   let fotoBase64 = "";
   if (fotoEl.files && fotoEl.files[0]) fotoBase64 = await toBase64(fotoEl.files[0]);
 
-  if (SHEET_URL && SHEET_URL !== "https://script.google.com/macros/s/AKfycbwFCGQJWXGoE1QWSZld36Al-k9tlqlJ97bHh04DpbjbDAmZ7NSLQpupqiKctpxvJPX4/exec") {
-    try {
-      await fetch(SHEET_URL, {
-        method: "POST", mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome: nomeRaw, pontos: tarefa.pontos, tarefa: tarefa.label, foto: fotoBase64 }),
-      });
-    } catch(e) { console.warn(e); }
-  }
+  try {
+    await fetch(SHEET_URL, {
+      method: "POST", mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome: nomeRaw, pontos: tarefa.pontos, tarefa: tarefa.label, foto: fotoBase64 }),
+    });
+    // Recarrega ranking da planilha após envio
+    setTimeout(carregarRanking, 1500);
+  } catch(e) { console.warn(e); }
 
   toast("+" + tarefa.pontos + " pts para " + nomeRaw + "! 🔥");
 
@@ -427,18 +420,38 @@ async function registrar() {
   document.getElementById("btn-text").textContent = "REGISTRAR PONTOS 🔥";
 }
 
-function adicionarPontos(nome, pts, isNew) {
+// Atualiza localmente para feedback imediato (sem esperar a planilha)
+function adicionarPontosLocal(nome, pts) {
   const norm = nome.trim().toLowerCase();
   const ex   = ranking.find(p => p.nome.trim().toLowerCase() === norm);
-  if (ex) { ex.pts += pts; ex.isNew = isNew; }
-  else    { ranking.push({ nome: nome.trim(), pts, isNew }); }
+  if (ex) { ex.pts += pts; ex.isNew = true; }
+  else    { ranking.push({ nome: nome.trim(), pts, isNew: true }); }
   renderRanking();
+}
+
+// Busca ranking real da planilha via Apps Script
+async function carregarRanking() {
+  try {
+    const res  = await fetch(SHEET_URL + "?action=ranking");
+    const data = await res.json();
+    if (data && data.ranking) {
+      ranking = data.ranking.map(r => ({ nome: r.nome, pts: Number(r.pontos), isNew: false }));
+      renderRanking();
+    }
+  } catch(e) {
+    console.warn("Não foi possível carregar ranking da planilha:", e);
+    renderRanking();
+  }
 }
 
 function renderRanking() {
   ranking.sort((a, b) => b.pts - a.pts);
   const tbody = document.getElementById("tbody");
   tbody.innerHTML = "";
+  if (ranking.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:2rem;color:#555;font-size:.9rem">Nenhuma pontuação ainda.<br/>Seja a primeira! 🔥</td></tr>';
+    return;
+  }
   ranking.forEach((p, i) => {
     const tr  = document.createElement("tr");
     if (p.isNew) { tr.classList.add("row-new"); setTimeout(() => p.isNew = false, 2200); }
